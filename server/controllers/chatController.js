@@ -524,7 +524,7 @@ const handleChat = async (req, res) => {
             }
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const chat = model.startChat({
             history: validHistory,
             generationConfig: { maxOutputTokens: 140 }
