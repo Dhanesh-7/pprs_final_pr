@@ -1,291 +1,201 @@
-# 🏛️ Public Problem Reporting System
+# 🏛️ Public Problem Reporting System (PPRS) - Municipal Board
 
-A full-stack web application that enables citizens to report municipal issues online while allowing administrators to efficiently manage, track, and resolve complaints.
+![React](https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-5.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-18.x-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-4.22-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/AI-Google_Gemini-8E75B2?style=for-the-badge&logo=google-gemini&logoColor=white)
+![Render](https://img.shields.io/badge/Deployment-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
 
----
+A full-stack, enterprise-grade civic management portal that empowers citizens to report local municipal issues (potholes, streetlights, garbage, water leakage, drainage) with real-time geolocation tagging, photo evidence, live tracking, and an interactive AI Assistant (*Municipal Buddy*). 
 
-## 📌 Features
-
-### 👤 Citizen Features
-
-* Submit complaints through a simple 4-step form
-* Upload images as evidence
-* Track complaint status using a unique complaint number
-* View complaint progress in real time
-* Responsive design for desktop and mobile devices
-
-### 🛠️ Admin Features
-
-* Secure administrator login using JWT authentication
-* Dashboard with complaint statistics and charts
-* View and manage all complaints
-* Filter complaints by category, priority, and status
-* Update complaint status
-* Assign priorities
-* Full-screen Google Maps view of complaint locations
-* Image management using Cloudinary
-* Email notifications for complaint updates
+Includes a complete **Administrative Dashboard** featuring data analytics, automated department routing, resolution tracking, interactive heatmaps, and automated email notifications.
 
 ---
 
-# 🚀 Quick Start
+## ✨ Key Features
 
-## 1️⃣ Clone the Repository
+### 👥 Citizen Portal
+- 📝 **Multi-Step Complaint Submission**: Intuitive 4-step wizard with category selection, description validation, photo uploads, and geolocation mapping.
+- 📍 **Interactive Location Tagging**: GPS-assisted automatic geolocation and Leaflet interactive map picker.
+- 🔍 **Real-Time Tracking**: Instant complaint lookup using unique complaint tracking IDs (`MUN-YYYY-XXXXX`).
+- 🤖 **Municipal Buddy AI Assistant**: Built-in chatbot powered by Google Gemini AI SDK for conversational reporting, tracking assistance, and civic guidance.
+- 📱 **Responsive & Glassmorphism Design**: Seamless experience across mobile, tablet, and desktop devices.
 
-```bash
-git clone https://github.com/your-username/public-problem-reporting-system.git
-cd public-problem-reporting-system
-```
-
----
-
-## 2️⃣ Setup the Server
-
-```bash
-cd server
-npm install
-cp .env.example .env
-```
-
-Fill in your environment variables inside **server/.env**.
-
-Seed the database:
-
-```bash
-node seed.js
-```
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-Server runs on:
-
-```
-http://localhost:5000
-```
+### 🛠️ Administrative & Departmental Dashboard
+- 🔐 **Secure Role-Based Access**: Role-based access control (SuperAdmin, Supervisor, Department Officer) secured via JSON Web Tokens (JWT) and BCrypt password hashing.
+- 📊 **Real-Time Analytics & Charts**: Interactive visualization of complaint volumes, resolution rates, and departmental breakdown using Recharts.
+- 🗺️ **Full-Screen Interactive Map View**: Geolocation plot of all active municipal complaints with status badges and quick filters.
+- 🔄 **Complaint Lifecycle Management**: Update statuses (`Submitted` ➔ `Under Review` ➔ `Assigned` ➔ `In Progress` ➔ `Resolved` / `Rejected`), attach resolution proof photos, and add public notes.
+- 📧 **Automated Email Notifications**: Nodemailer SMTP integration automatically sending HTML status updates to citizens.
 
 ---
 
-## 3️⃣ Setup the Client
-
-```bash
-cd client
-npm install
-cp .env.example .env
-```
-
-Fill in your environment variables inside **client/.env**.
-
-Start the React application:
-
-```bash
-npm run dev
-```
-
-Client runs on:
+## 🏗️ Architecture & Tech Stack
 
 ```
-http://localhost:5173
+   ┌───────────────────────────────────────────────────────────┐
+   │                    Client (React 18 + Vite)                │
+   │      Tailwind CSS  │  Recharts  │  Leaflet  │  Axios       │
+   └─────────────────────────────┬─────────────────────────────┘
+                                 │ REST API / JSON
+   ┌─────────────────────────────▼─────────────────────────────┐
+   │                   Server (Node.js + Express)               │
+   │    JWT Auth │ Multer Storage │ Nodemailer │ CORS Security  │
+   └───────┬─────────────────────┬─────────────────────┬───────┘
+           │                     │                     │
+ ┌─────────▼─────────┐ ┌─────────▼─────────┐ ┌─────────▼─────────┐
+ │   MongoDB Atlas   │ │  Cloudinary API   │ │ Google Gemini AI  │
+ │ (Mongoose Models) │ │ (Media Host/CDN)  │ │ (Chatbot Engine)  │
+ └───────────────────┘ └───────────────────┘ └───────────────────┘
 ```
+
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Frontend** | React 18, Vite, Tailwind CSS | High-performance SPA with fast HMR |
+| **State & Router** | React Context API, React Router DOM v6 | Global auth state management and SPA routing |
+| **Maps & Data** | Leaflet, React-Leaflet, Recharts | Interactive map UI and analytics dashboard |
+| **Backend API** | Node.js, Express.js | Modular REST API with middleware architecture |
+| **Database** | MongoDB Atlas, Mongoose | Schema validation, indexes, geospatial coordinates |
+| **AI Integration** | `@google/generative-ai` (Gemini 1.5) | Conversational AI assistant with intent parsing |
+| **Media Host** | Cloudinary API | Cloud storage and image optimization |
+| **Email Service** | Nodemailer (Gmail / Custom SMTP) | HTML email template delivery |
 
 ---
 
-# ⚙️ Environment Variables
-
-## Server (.env)
-
-```env
-PORT=5000
-
-MONGODB_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/municipal
-
-JWT_SECRET=your_long_random_secret
-
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your@gmail.com
-SMTP_PASS=your_gmail_app_password
-
-CLIENT_URL=http://localhost:5173
-```
-
----
-
-## Client (.env)
-
-```env
-VITE_API_URL=http://localhost:5000
-VITE_GOOGLE_MAPS_KEY=your_google_maps_key
-```
-
----
-
-# 👨‍💼 Default Admin Account
-
-After running:
-
-```bash
-node seed.js
-```
-
-Use the following credentials:
-
-| Field    | Value                                             |
-| -------- | ------------------------------------------------- |
-| URL      | http://localhost:5173/admin/login                 |
-| Email    | [admin@municipal.gov](mailto:admin@municipal.gov) |
-| Password | Admin@123                                         |
-
----
-
-# 📄 Application Pages
-
-| Route                   | Description               |
-| ----------------------- | ------------------------- |
-| `/`                     | Home Page                 |
-| `/report`               | Submit Complaint          |
-| `/track/:no`            | Track Complaint           |
-| `/admin/login`          | Admin Login               |
-| `/admin/dashboard`      | Dashboard with Analytics  |
-| `/admin/complaints`     | Complaint Management      |
-| `/admin/complaints/:id` | Complaint Details         |
-| `/admin/map`            | Full-screen Complaint Map |
-
----
-
-# 🛠️ Tech Stack
-
-### Frontend
-
-* React 18
-* Tailwind CSS
-* Vite
-
-### Backend
-
-* Node.js
-* Express.js
-
-### Database
-
-* MongoDB Atlas
-* Mongoose
-
-### Authentication
-
-* JWT (JSON Web Tokens)
-
-### File Storage
-
-* Cloudinary
-
-### Maps
-
-* Google Maps API
-
-### Email Service
-
-* Nodemailer (Gmail SMTP)
-
----
-
-# 📁 Project Structure
+## 📁 Repository Structure
 
 ```
-public-problem-reporting-system/
-│
-├── client/
+pprs_final_pr/
+├── client/                     # Frontend React (Vite) Application
 │   ├── src/
-│   ├── public/
+│   │   ├── components/         # Reusable UI (Chatbot, Maps, Timelines, Badges)
+│   │   ├── context/            # AuthContext & Global state
+│   │   ├── pages/              # Citizen & Admin pages
+│   │   ├── utils/              # Axios API client & helpers
+│   │   ├── App.jsx             # Main router & routes
+│   │   └── main.jsx            # Entry point
+│   ├── package.json
+│   └── vite.config.js
+│
+├── server/                     # Backend Node.js / Express API
+│   ├── controllers/            # Admin, Complaint & Chat controllers
+│   ├── middleware/             # Auth JWT protection & Multer upload middleware
+│   ├── models/                 # Mongoose schemas (Admin, Complaint)
+│   ├── routes/                 # Express API routes (/api/complaints, /api/admin, /api/chat)
+│   ├── utils/                  # Cloudinary, Mailer & ID generator utilities
+│   ├── index.js                # Server entry point & static SPA server
+│   ├── seed.js                 # Seed script for initial admin & test data
 │   └── package.json
 │
-├── server/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   ├── config/
-│   ├── uploads/
-│   ├── seed.js
-│   └── package.json
-│
+├── render.yaml                 # Render Blueprint automated deployment config
+├── package.json                # Root build & lifecycle scripts
 └── README.md
 ```
 
 ---
 
-# 🔒 Security Features
+## ⚡ Quick Start (Local Setup)
 
-* JWT Authentication
-* Protected Admin Routes
-* Environment Variable Configuration
-* Secure Password Hashing
-* Image Upload Validation
-* Server-side Input Validation
-
----
-
-# 📸 Screenshots
-
-You can add screenshots here after deployment.
-
-Example:
-
-```
-screenshots/
-├── home.png
-├── report-form.png
-├── tracking.png
-├── dashboard.png
-├── complaints.png
-└── map.png
-```
-
----
-
-# 📦 Build for Production
-
-### Client
+### 1️⃣ Clone Repository
 
 ```bash
+git clone https://github.com/Dhanesh-7/pprs_final_pr.git
+cd pprs_final_pr
+```
+
+### 2️⃣ Configure Environment Variables
+
+Create `.env` inside the `server/` directory:
+
+```ini
+PORT=5000
+MONGODB_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_super_secret_jwt_key
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+GEMINI_API_KEY=your_google_gemini_api_key
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+CLIENT_URL=http://localhost:5173
+```
+
+Create `.env` inside the `client/` directory:
+
+```ini
+VITE_API_URL=http://localhost:5000
+```
+
+### 3️⃣ Install Dependencies & Run
+
+#### **Option A: Full Application (Root Command)**
+```bash
+# Install dependencies for both client & server and build frontend
 npm run build
-```
 
-### Server
-
-```bash
+# Start the server (serves both API & Frontend)
 npm start
 ```
+Open **`http://localhost:5000`** in your browser.
+
+#### **Option B: Development Mode (Separate Terminals)**
+
+- **Terminal 1 (Backend)**:
+  ```bash
+  cd server
+  npm run dev
+  ```
+- **Terminal 2 (Frontend)**:
+  ```bash
+  cd client
+  npm run dev
+  ```
+Open **`http://localhost:5173`** in your browser.
 
 ---
 
-# 🤝 Contributing
+## 👨‍💼 Seed Test Admin Account
 
-Contributions are welcome.
+To seed default categories and create an initial administrator account:
 
-1. Fork the repository.
-2. Create a new feature branch.
-3. Commit your changes.
-4. Push the branch.
-5. Open a Pull Request.
+```bash
+cd server
+node seed.js
+```
+
+| Field | Credentials |
+| :--- | :--- |
+| **Login URL** | `/admin/login` |
+| **Email** | `admin@municipal.gov` |
+| **Password** | `Admin@123` |
 
 ---
 
-# 📄 License
+## 🌐 Deploying to Render
 
-This project is licensed under the MIT License.
+This project includes a pre-configured [`render.yaml`](./render.yaml) file for one-click deployment using **Render Blueprints**:
+
+1. Push code to your GitHub repository.
+2. Log into [Render Dashboard](https://dashboard.render.com/) and click **New +** -> **Blueprint**.
+3. Select your `pprs_final_pr` repository.
+4. Render will automatically build the client (`npm run build`) and start the production server (`npm start`).
+5. Configure your environment variables (`MONGODB_URI`, `JWT_SECRET`, `CLOUDINARY_*`, `GEMINI_API_KEY`) in the Render Environment tab.
 
 ---
 
-# 👨‍💻 Author
+## 📄 License
 
-**Dhanesh**
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
-Built with ❤️ using React, Node.js, Express, MongoDB, and Tailwind CSS.
+---
+
+## 👨‍💻 Author
+
+**Dhanesh**  
+*Full-Stack Software Engineer*  
+- GitHub: [@Dhanesh-7](https://github.com/Dhanesh-7)
