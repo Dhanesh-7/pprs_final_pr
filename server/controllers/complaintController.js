@@ -1,3 +1,4 @@
+const mongoose                 = require('mongoose');
 const Complaint              = require('../models/Complaint');
 const { uploadToCloudinary } = require('../utils/cloudinary');
 const generateComplaintNo    = require('../utils/generateComplaintNo');
@@ -10,6 +11,16 @@ async function getCategories(req, res) {
 
 async function submitComplaint(req, res) {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      if (process.env.MONGODB_URI) {
+        try { await mongoose.connect(process.env.MONGODB_URI); }
+        catch (dbErr) { console.error('[submitComplaint DB Reconnect Error]', dbErr.message); }
+      }
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({ error: 'Database is currently unavailable. Please try again in a few seconds.' });
+      }
+    }
+
     const { category, description, latitude, longitude, address,
             reporterName, reporterEmail, reporterPhone } = req.body;
 
@@ -25,8 +36,14 @@ async function submitComplaint(req, res) {
     const uploadedImages = [];
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
-        const result = await uploadToCloudinary(file.buffer, 'municipal-complaints');
-        uploadedImages.push(result);
+        try {
+          const result = await uploadToCloudinary(file.buffer, 'municipal-complaints');
+          uploadedImages.push(result);
+        } catch (uploadErr) {
+          console.error('[Cloudinary upload fallback]', uploadErr.message);
+          const base64Str = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+          uploadedImages.push({ imageUrl: base64Str, publicId: `local-${Date.now()}` });
+        }
       }
     }
 
