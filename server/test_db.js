@@ -1,4 +1,7 @@
-require('dotenv').config({ path: 'c:/Users/USER/Downloads/public-problem-reporting-system/municipal-board/server/.env' });
+require('dotenv').config();
+const dns = require('dns');
+if (dns.setDefaultResultOrder) dns.setDefaultResultOrder('ipv4first');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 const mongoose = require('mongoose');
 
 async function test() {
