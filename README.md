@@ -176,23 +176,6 @@ node seed.js
 
 ---
 
-## 🌐 Deploying to Render
-
-This project includes a pre-configured [`render.yaml`](./render.yaml) file for one-click deployment using **Render Blueprints**:
-
-1. Push code to your GitHub repository.
-2. Log into [Render Dashboard](https://dashboard.render.com/) and click **New +** -> **Blueprint**.
-3. Select your `pprs_final_pr` repository.
-4. Render will automatically build the client (`npm run build`) and start the production server (`npm start`).
-5. Configure your environment variables (`MONGODB_URI`, `JWT_SECRET`, `CLOUDINARY_*`, `GEMINI_API_KEY`) in the Render Environment tab.
-
----
-
-## 📄 License
-
-Distributed under the **MIT License**. See `LICENSE` for more information.
-
----
 
 ## 👨‍💻 Author
 
