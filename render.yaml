@@ -2,7 +2,7 @@ services:
   - type: web
     name: municipal-board-system
     runtime: node
-    plan: free # Change this to 'standard' if needed
+    plan: free 
     buildCommand: npm run build
     startCommand: npm start
     envVars:
@@ -11,9 +11,9 @@ services:
       - key: PORT
         value: 10000
       - key: MONGODB_URI
-        sync: false # User must set this manually in dashboard
+        sync: false 
       - key: JWT_SECRET
-        generateValue: true # Generate a random secret
+        generateValue: true 
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
@@ -31,7 +31,7 @@ services:
       - key: GEMINI_API_KEY
         sync: false
       - key: CLIENT_URL
-        value: https://municipal-board-system.onrender.com # Update this after first deployment
+        value: https://municipal-board-system.onrender.com 
       - key: TWILIO_SID
         sync: false
       - key: TWILIO_TOKEN
