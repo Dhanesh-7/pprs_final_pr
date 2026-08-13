@@ -9,8 +9,9 @@ async function protect(req, res, next) {
     }
     const token = authHeader.split(' ')[1];
     let decoded;
+    const secret = process.env.JWT_SECRET || 'municipal_board_secret_jwt_key_2024';
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      decoded = jwt.verify(token, secret);
     } catch (e) {
       if (e.name === 'TokenExpiredError') return res.status(401).json({ error: 'Session expired. Please log in again.' });
       return res.status(401).json({ error: 'Invalid token. Please log in again.' });

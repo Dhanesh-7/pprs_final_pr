@@ -74,10 +74,33 @@ app.use((err, _req, res, _next) => {
   });
 });
 
+const Admin = require('./models/Admin');
+
+async function autoSeedAdmin() {
+  try {
+    const existing = await Admin.findOne({ role: 'superadmin' });
+    if (!existing) {
+      const passwordHash = await Admin.hashPassword('Admin@123');
+      await Admin.create({
+        name: 'Super Admin',
+        email: 'admin@municipal.gov',
+        passwordHash,
+        role: 'superadmin',
+        department: 'General',
+        isActive: true,
+      });
+      console.log(' Superadmin account initialized: admin@municipal.gov / Admin@123');
+    }
+  } catch (err) {
+    console.error(' Auto-seed error:', err.message);
+  }
+}
+
 async function startServer() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log(' MongoDB connected');
+    await autoSeedAdmin();
   } catch (err) {
     console.error(' MongoDB connection failed:', err.message);
     console.warn(' Starting server without database connection. Some features may not work.');

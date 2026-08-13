@@ -9,13 +9,19 @@ const DEPARTMENTS   = ['Roads & Infrastructure','Sanitation','Electrical','Water
 const VALID_STATUSES = ['submitted','under_review','assigned','in_progress','resolved','rejected'];
 
 function generateToken(admin) {
-  return jwt.sign({ id: admin._id, email: admin.email, role: admin.role }, process.env.JWT_SECRET, { expiresIn: '8h' });
+  const secret = process.env.JWT_SECRET || 'municipal_board_secret_jwt_key_2024';
+  return jwt.sign({ id: admin._id, email: admin.email, role: admin.role }, secret, { expiresIn: '8h' });
 }
 
 async function login(req, res) {
   try {
     if (mongoose.connection.readyState !== 1) {
-      return res.status(503).json({ error: 'Database is unavailable. Please try again shortly.' });
+      if (process.env.MONGODB_URI) {
+        try { await mongoose.connect(process.env.MONGODB_URI); } catch (e) {}
+      }
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({ error: 'Database is unavailable. Please try again shortly.' });
+      }
     }
 
     const { email, password } = req.body;
