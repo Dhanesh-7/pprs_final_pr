@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { fetchComplaintByNo }           from '@/utils/api';
 import StatusBadge                      from '@/components/StatusBadge';
 import StatusTimeline                   from '@/components/StatusTimeline';
+import LocationMap                      from '@/components/LocationMap';
 
 const MAPS_KEY = import.meta.env.VITE_GOOGLE_MAPS_KEY;
 
@@ -176,17 +177,19 @@ export default function TrackComplaint() {
               <div className="card p-6">
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">Reported location</h3>
                 <div className="rounded-xl overflow-hidden border border-gray-200 aspect-video bg-gray-100">
-                  {mapUrl
-                    ? <img src={mapUrl} alt="Location" className="w-full h-full object-cover" />
-                    : <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-400">
-                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <p className="text-sm">{complaint.latitude?.toFixed(5)}, {complaint.longitude?.toFixed(5)}</p>
-                        <p className="text-xs text-center px-4">{complaint.address}</p>
-                      </div>
-                  }
+                  {mapUrl ? (
+                    <img src={mapUrl} alt="Location" className="w-full h-full object-cover" />
+                  ) : Number.isFinite(complaint.latitude) && Number.isFinite(complaint.longitude) ? (
+                    <LocationMap
+                      latitude={complaint.latitude}
+                      longitude={complaint.longitude}
+                      address={complaint.address}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-400">
+                      <p className="text-xs text-center px-4">{complaint.address}</p>
+                    </div>
+                  )}
                 </div>
               </div>
 

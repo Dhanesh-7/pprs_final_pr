@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate }  from 'react-router-dom';
 import AdminLayout      from '@/components/AdminLayout';
 import StatusBadge      from '@/components/StatusBadge';
+import LeafletMapView   from '@/components/LeafletMapView';
 import { fetchMapData } from '@/utils/api';
 import toast            from 'react-hot-toast';
 
@@ -30,7 +31,7 @@ export default function MapView() {
   const [complaints, setComplaints]         = useState([]);
   const [loading, setLoading]               = useState(true);
   const [mapLoaded, setMapLoaded]           = useState(false);
-  const [mapError, setMapError]             = useState('');
+  const [useLeaflet, setUseLeaflet]         = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
 
   useEffect(() => { loadData(); }, []);
@@ -44,7 +45,7 @@ export default function MapView() {
 
   useEffect(() => {
     if (!MAPS_KEY || MAPS_KEY === 'your_google_maps_api_key_here') {
-      setMapError('Google Maps API key not configured. Add VITE_GOOGLE_MAPS_KEY to client/.env');
+      setUseLeaflet(true);
       return;
     }
     if (window.google?.maps) { setMapLoaded(true); return; }
@@ -58,7 +59,7 @@ export default function MapView() {
     s.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_KEY}&libraries=places`;
     s.async = true; s.defer = true;
     s.onload  = () => setMapLoaded(true);
-    s.onerror = () => setMapError('Failed to load Google Maps. Check your API key.');
+    s.onerror = () => setUseLeaflet(true);
     document.head.appendChild(s);
   }, []);
 
@@ -144,45 +145,26 @@ export default function MapView() {
 
         {/* Map */}
         <div className="flex-1 relative">
-          <div ref={mapRef} className="absolute inset-0" />
-
-          {(loading || (!mapLoaded && !mapError)) && (
-            <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm text-gray-500">{loading ? 'Loading complaint data...' : 'Loading map...'}</p>
-              </div>
+          {useLeaflet ? (
+            <div className="absolute inset-0">
+              <LeafletMapView
+                complaints={selectedStatus ? complaints.filter((c) => c.status === selectedStatus) : complaints}
+                onNavigate={navigate}
+              />
             </div>
-          )}
+          ) : (
+            <>
+              <div ref={mapRef} className="absolute inset-0" />
 
-          {mapError && (
-            <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10 p-6">
-              <div className="card max-w-md w-full p-8 text-center">
-                <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Map unavailable</h3>
-                <p className="text-sm text-gray-500 mb-4">{mapError}</p>
-                <div className="text-left mt-6">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">All complaint locations ({complaints.length})</p>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {complaints.map((c) => (
-                      <button key={c._id} onClick={() => navigate(`/admin/complaints/${c._id}`)}
-                        className="w-full text-left flex items-start gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                        <span className="w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: STATUS_COLORS[c.status] }} />
-                        <div className="min-w-0">
-                          <p className="text-xs font-mono font-semibold text-gray-900">{c.complaintNo}</p>
-                          <p className="text-xs text-gray-500 truncate">{c.address}</p>
-                        </div>
-                        <StatusBadge status={c.status} size="sm" />
-                      </button>
-                    ))}
+              {(loading || (!mapLoaded && !useLeaflet)) && (
+                <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-10 h-10 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-sm text-gray-500">{loading ? 'Loading complaint data...' : 'Loading map...'}</p>
                   </div>
                 </div>
-              </div>
-            </div>
+              )}
+            </>
           )}
 
           {/* Legend */}

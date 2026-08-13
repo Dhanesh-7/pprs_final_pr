@@ -3,6 +3,7 @@ import { useParams, useNavigate }      from 'react-router-dom';
 import AdminLayout                     from '@/components/AdminLayout';
 import StatusBadge                     from '@/components/StatusBadge';
 import StatusTimeline                  from '@/components/StatusTimeline';
+import LocationMap                      from '@/components/LocationMap';
 import { fetchComplaintById, updateComplaintStatus, assignComplaintDept, fetchDepartments } from '@/utils/api';
 import toast from 'react-hot-toast';
 
@@ -182,14 +183,19 @@ export default function ComplaintDetail() {
               <div className="card p-6">
                 <h3 className="section-title mb-4">Exact location</h3>
                 <div className="rounded-xl overflow-hidden border border-gray-200 aspect-video bg-gray-100">
-                  {mapUrl
-                    ? <img src={mapUrl} alt="Location map" className="w-full h-full object-cover" />
-                    : <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-400">
-                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
-                        <p className="text-sm">{complaint.latitude?.toFixed(5)}, {complaint.longitude?.toFixed(5)}</p>
-                        <a href={`https://maps.google.com/?q=${complaint.latitude},${complaint.longitude}`} target="_blank" rel="noopener noreferrer" className="text-xs text-primary-600 hover:underline">Open in Google Maps →</a>
-                      </div>
-                  }
+                  {mapUrl ? (
+                    <img src={mapUrl} alt="Location map" className="w-full h-full object-cover" />
+                  ) : Number.isFinite(complaint.latitude) && Number.isFinite(complaint.longitude) ? (
+                    <LocationMap
+                      latitude={complaint.latitude}
+                      longitude={complaint.longitude}
+                      address={complaint.address}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-400">
+                      <p className="text-sm">{complaint.address}</p>
+                    </div>
+                  )}
                 </div>
                 {mapUrl && <a href={`https://maps.google.com/?q=${complaint.latitude},${complaint.longitude}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-primary-600 hover:underline mt-2">Open in Google Maps →</a>}
               </div>
